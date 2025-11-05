@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Головне меню -->
+        <menuitem id="menu_it_asset_root"
+                  name="IT Активи"
+                  sequence="10"
+                  web_icon="it_asset_management,static/description/icon.png"/>
+
+        <!-- Активи -->
+        <menuitem id="menu_it_asset_assets"
+                  name="Активи"
+                  parent="menu_it_asset_root"
+                  sequence="10"/>
+
+        <menuitem id="menu_it_asset_list"
+                  name="Всі активи"
+                  parent="menu_it_asset_assets"
+                  action="action_it_asset"
+                  sequence="10"/>
+
+        <menuitem id="menu_it_asset_category"
+                  name="Категорії"
+                  parent="menu_it_asset_assets"
+                  action="action_it_asset_category"
+                  sequence="20"/>
+
+        <menuitem id="menu_it_asset_movement"
+                  name="Переміщення"
+                  parent="menu_it_asset_assets"
+                  action="action_it_asset_movement"
+                  sequence="30"/>
+
+        <!-- Заявки -->
+        <menuitem id="menu_it_asset_requests"
+                  name="Заявки"
+                  parent="menu_it_asset_root"
+                  sequence="20"/>
+
+        <menuitem id="menu_it_asset_request_list"
+                  name="Всі заявки"
+                  parent="menu_it_asset_requests"
+                  action="action_it_asset_request"
+                  sequence="10"/>
+
+        <menuitem id="menu_it_asset_request_new"
+                  name="Нові заявки"
+                  parent="menu_it_asset_requests"
+                  action="action_it_asset_request_new"
+                  sequence="20"/>
+
+        <!-- Звіти -->
+        <menuitem id="menu_it_asset_reports"
+                  name="Звіти"
+                  parent="menu_it_asset_root"
+                  sequence="30"/>
+
+        <!-- Налаштування -->
+        <menuitem id="menu_it_asset_config"
+                  name="Налаштування"
+                  parent="menu_it_asset_root"
+                  sequence="100"
+                  groups="it_asset_management.group_it_asset_manager"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Додавання лічильників на головну сторінку порталу -->
+        <template id="portal_my_home_menu_assets" name="Portal My Home: Assets" inherit_id="portal.portal_my_home" priority="40">
+            <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+                <t t-set="portal_client_category_enable" t-value="True"/>
+            </xpath>
+            <div id="portal_client_category" position="inside">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'/it_asset_management/static/description/icon.png'"/>
+                    <t t-set="title">Мої активи</t>
+                    <t t-set="url" t-value="'/my/assets'"/>
+                    <t t-set="placeholder_count" t-value="'asset_count'"/>
+                </t>
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="icon" t-value="'fa-ticket'"/>
+                    <t t-set="title">Мої заявки</t>
+                    <t t-set="url" t-value="'/my/asset-requests'"/>
+                    <t t-set="placeholder_count" t-value="'request_count'"/>
+                </t>
+            </div>
+        </template>
+        
+        <!-- Список активів співробітника -->
+        <template id="portal_my_assets" name="My Assets">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Мої активи</t>
+                </t>
+                
+                <t t-if="not assets">
+                    <div class="alert alert-warning" role="alert">
+                        У вас немає закріплених активів.
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="row mt-3">
+                        <t t-foreach="assets" t-as="asset">
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <a t-att-href="'/my/asset/%s' % asset.id">
+                                                <t t-out="asset.name"/>
+                                            </a>
+                                        </h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">
+                                            <t t-out="asset.code"/>
+                                        </h6>
+                                        <p class="card-text">
+                                            <strong>Категорія:</strong> <t t-out="asset.category_id.name"/><br/>
+                                            <strong>Серійний номер:</strong> <t t-out="asset.serial_number or '-'"/><br/>
+                                            <strong>Дата призначення:</strong> <t t-out="asset.assignment_date" t-options='{"widget": "date"}'/><br/>
+                                            <strong>Статус:</strong> <t t-out="asset.state"/>
+                                        </p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <a t-att-href="'/my/asset/%s' % asset.id" class="btn btn-sm btn-primary">Деталі</a>
+                                        <a t-att-href="'/my/asset-requests/new?asset_id=%s' % asset.id" class="btn btn-sm btn-outline-warning">Ремонт</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <div t-if="pager" class="o_portal_pager text-center">
+                        <t t-call="portal.pager"/>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <!-- Детальна сторінка активу -->
+        <template id="portal_my_asset" name="My Asset Detail">
+            <t t-call="portal.portal_layout">
+                <t t-set="additional_title" t-value="asset.name"/>
+
+                <div class="container mt-3">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><t t-out="asset.name"/></h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Інвентарний номер:</strong><br/>
+                                            <span t-out="asset.code"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Категорія:</strong><br/>
+                                            <span t-out="asset.category_id.name"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Виробник:</strong><br/>
+                                            <span t-out="asset.manufacturer or '-'"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Модель:</strong><br/>
+                                            <span t-out="asset.model or '-'"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <strong>Серійний номер:</strong><br/>
+                                            <span t-out="asset.serial_number or '-'"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <strong>Дата призначення:</strong><br/>
+                                            <span t-out="asset.assignment_date" t-options='{"widget": "date"}'/>
+                                        </div>
+                                    </div>
+
+                                    <t t-if="asset.description">
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <strong>Опис:</strong><br/>
+                                                <p t-out="asset.description"/>
+                                            </div>
+                                        </div>
+                                    </t>
+
+                                    <t t-if="asset.specifications">
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <strong>Технічні характеристики:</strong><br/>
+                                                <p t-out="asset.specifications" style="white-space: pre-line;"/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="/my/assets" class="btn btn-secondary">← Назад до списку</a>
+                                    <a t-att-href="'/my/asset-requests/new?asset_id=%s' % asset.id" class="btn btn-warning float-end">Заявка на ремонт</a>
+                                </div>
+                            </div>
+
+                            <!-- Історія переміщень -->
+                            <div class="card mt-3" t-if="asset.movement_ids">
+                                <div class="card-header">
+                                    <h5>Історія переміщень</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Дата</th>
+                                                <th>Тип</th>
+                                                <th>Співробітник</th>
+                                                <th>Примітки</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="asset.movement_ids" t-as="movement">
+                                                <tr>
+                                                    <td><span t-out="movement.movement_date" t-options='{"widget": "date"}'/></td>
+                                                    <td><span t-out="dict(movement._fields['movement_type'].selection).get(movement.movement_type)"/></td>
+                                                    <td><span t-out="movement.employee_id.name"/></td>
+                                                    <td><span t-out="movement.notes or '-'"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Швидкі дії</h5>
+                                </div>
+                                <div class="card-body">
+                                    <a t-att-href="'/my/asset-requests/new?asset_id=%s&amp;request_type=repair' % asset.id"
+                                       class="btn btn-block btn-warning mb-2 w-100">
+                                        <i class="fa fa-wrench"/> Заявка на ремонт
+                                    </a>
+                                    <a t-att-href="'/my/asset-requests/new?asset_id=%s&amp;request_type=replacement' % asset.id"
+                                       class="btn btn-block btn-info mb-2 w-100">
+                                        <i class="fa fa-exchange"/> Заявка на заміну
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <!-- Список заявок співробітника -->
+        <template id="portal_my_requests" name="My Asset Requests">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Мої заявки</t>
+                </t>
+
+                <div class="mt-3 mb-3">
+                     <a href="/my/asset-requests/new" class="btn btn-primary">
+                         <i class="fa fa-plus"/> Створити нову заявку
+                    </a>
+                </div>
+
+                <t t-if="not requests">
+                    <div class="alert alert-info" role="alert">
+                        У вас поки немає заявок. <a href="/my/asset-requests/new">Створити заявку</a>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Номер</th>
+                                    <th>Тип</th>
+                                    <th>Актив</th>
+                                    <th>Дата</th>
+                                    <th>Пріоритет</th>
+                                    <th>Статус</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="requests" t-as="req">
+                                    <tr>
+                                        <td>
+                                            <a t-att-href="'/my/asset-requests/%s' % req.id">
+                                                <t t-out="req.name"/>
+                                            </a>
+                                        </td>
+                                        <td><t t-out="dict(req._fields['request_type'].selection).get(req.request_type)"/></td>
+                                        <td><t t-out="req.asset_id.name if req.asset_id else req.category_id.name if req.category_id else '-'"/></td>
+                                        <td><t t-out="req.request_date" t-options='{"widget": "date"}'/></td>
+                                        <td>
+                                            <span t-out="dict(req._fields['priority'].selection).get(req.priority)"/>
+                                        </td>
+                                <td>
+                                    <span class="badge badge-secondary" t-esc="req.state"/>
+                                </td>
+                                <td class="text-end">
+                                    <a t-att-href="'/my/asset-requests/%s' % req.id" class="btn btn-sm btn-primary">Деталі</a>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <div t-if="pager" class="o_portal_pager text-center">
+                <t t-call="portal.pager"/>
+            </div>
+        </t>
+    </t>
+</template>
+
+        <!-- Детальна сторінка заявки -->
+<template id="portal_my_request" name="My Asset Request Detail">
+    <t t-call="portal.portal_layout">
+        <t t-set="additional_title" t-value="asset_request.name"/>
+
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Заявка <t t-out="asset_request.name"/></h3>
+                            <span class="badge badge-secondary float-end" t-esc="asset_request.state"/>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Тип заявки:</strong><br/>
+                                    <span t-out="dict(asset_request._fields['request_type'].selection).get(asset_request.request_type)"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Дата створення:</strong><br/>
+                                    <span t-out="asset_request.request_date" t-options='{"widget": "date"}'/>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Пріоритет:</strong><br/>
+                                    <span t-out="dict(asset_request._fields['priority'].selection).get(asset_request.priority)"/>
+                                </div>
+                                <div class="col-md-6" t-if="asset_request.assigned_to_id">
+                                    <strong>Відповідальний:</strong><br/>
+                                    <span t-out="asset_request.assigned_to_id.name"/>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3" t-if="asset_request.asset_id">
+                                <div class="col-12">
+                                    <strong>Актив:</strong><br/>
+                                    <a t-att-href="'/my/asset/%s' % asset_request.asset_id.id">
+                                        <t t-out="asset_request.asset_id.name"/> (<t t-out="asset_request.asset_id.code"/>)
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3" t-if="asset_request.category_id">
+                                <div class="col-12">
+                                    <strong>Категорія:</strong><br/>
+                                    <span t-out="asset_request.category_id.name"/>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <strong>Опис:</strong><br/>
+                                    <p t-out="asset_request.description" style="white-space: pre-line;"/>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3" t-if="asset_request.justification">
+                                <div class="col-12">
+                                    <strong>Обґрунтування:</strong><br/>
+                                    <p t-out="asset_request.justification" style="white-space: pre-line;"/>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3" t-if="asset_request.completion_date">
+                                <div class="col-12">
+                                    <strong>Дата виконання:</strong><br/>
+                                    <span t-out="asset_request.completion_date" t-options='{"widget": "date"}'/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="/my/asset-requests" class="btn btn-secondary">← Назад до списку</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Статус заявки</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress" style="height: 30px;">
+                                <div class="progress-bar" role="progressbar"
+                                     t-att-style="'width: %s%%%%' % ({'draft': '0', 'submitted': '25', 'in_progress': '50', 'approved': '75', 'done': '100'}.get(asset_request.state, '0'))"
+                                     t-att-aria-valuenow="{'draft': '0', 'submitted': '25', 'in_progress': '50', 'approved': '75', 'done': '100'}.get(asset_request.state, '0')"
+                                     aria-valuemin="0" aria-valuemax="100">
+                                    <t t-out="dict(asset_request._fields['state'].selection).get(asset_request.state)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Історія повідомлень та коментарів -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Історія та коментарі</h5>
+                        </div>
+                        <div class="card-body">
+                            <t t-if="not asset_request.message_ids">
+                                <p class="text-muted">Поки немає коментарів</p>
+                            </t>
+                            <t t-else="">
+                                <div class="o_portal_chatter_messages">
+                                    <t t-foreach="asset_request.message_ids.sorted(key=lambda m: m.date, reverse=True)" t-as="message">
+                                        <div class="mb-3 p-3 border rounded" t-if="message.message_type != 'notification'">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong t-out="message.author_id.name or 'Система'"/>
+                                                <small class="text-muted" t-out="message.date" t-options='{"widget": "datetime"}'/>
+                                            </div>
+                                            <div t-out="message.body"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+
+                            <!-- Форма для нового коментаря -->
+                            <div class="mt-4">
+                                <h6>Додати коментар</h6>
+                                <form t-attf-action="/my/asset-requests/{{asset_request.id}}/message" method="POST">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <div class="mb-3">
+                                        <textarea name="message" class="form-control" rows="3" placeholder="Ваш коментар..." required="required"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Надіслати коментар</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</template>
+
+        <!-- Форма створення нової заявки -->
+        <template id="portal_new_request" name="Create New Asset Request">
+            <t t-call="portal.portal_layout">
+                <div class="container mt-3">
+                    <h2>Створити нову заявку</h2>
+
+                    <form action="/my/asset-requests/create" method="post" class="mt-3">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="request_type" class="form-label">Тип заявки *</label>
+                                    <select name="request_type" id="request_type" class="form-select" required="required">
+                                        <option value="new">Новий актив</option>
+                                        <option value="repair">Ремонт</option>
+                                        <option value="replacement">Заміна</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3" id="category_field">
+                                    <label for="category_id" class="form-label">Категорія</label>
+                                    <select name="category_id" id="category_id" class="form-select">
+                                        <option value="">Оберіть категорію...</option>
+                                        <t t-foreach="categories" t-as="category">
+                                            <option t-att-value="category.id" t-out="category.name"/>
+                                        </t>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3" id="asset_field" style="display:none;">
+                                    <label for="asset_id" class="form-label">Актив *</label>
+                                    <select name="asset_id" id="asset_id" class="form-select">
+                                        <option value="">Оберіть актив...</option>
+                                        <t t-foreach="assets" t-as="asset">
+                                            <option t-att-value="asset.id" t-out="'%s - %s' % (asset.code, asset.name)"/>
+                                        </t>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Опис *</label>
+                                    <textarea name="description" id="description" class="form-control" rows="5" required="required" placeholder="Детально опишіть вашу потребу або проблему..."></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="justification" class="form-label">Обґрунтування</label>
+                                    <textarea name="justification" id="justification" class="form-control" rows="3" placeholder="Обґрунтуйте необхідність (опціонально)..."></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="priority" class="form-label">Пріоритет</label>
+                                    <select name="priority" id="priority" class="form-select">
+                                        <option value="0">Низький</option>
+                                        <option value="1" selected="selected">Середній</option>
+                                        <option value="2">Високий</option>
+                                        <option value="3">Критичний</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Створити заявку</button>
+                                <a href="/my/asset-requests" class="btn btn-secondary">Скасувати</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <script>
+                    // JavaScript для переключення між полями категорії та активу
+                    document.getElementById('request_type').addEventListener('change', function() {
+                        var categoryField = document.getElementById('category_field');
+                        var assetField = document.getElementById('asset_field');
+                        var assetSelect = document.getElementById('asset_id');
+                        var categorySelect = document.getElementById('category_id');
+
+                        if (this.value === 'new') {
+                            categoryField.style.display = 'block';
+                            assetField.style.display = 'none';
+                            assetSelect.required = false;
+                            categorySelect.required = false;
+                        } else {
+                            categoryField.style.display = 'none';
+                            assetField.style.display = 'block';
+                            assetSelect.required = true;
+                            categorySelect.required = false;
+                        }
+                    });
+                </script>
+            </t>
+        </template>
+
+    </data>
+</odoo>

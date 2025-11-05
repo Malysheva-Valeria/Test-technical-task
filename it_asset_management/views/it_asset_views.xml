@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Список активів (таблиця з кольоровими рядками) -->
+        <record id="view_it_asset_tree" model="ir.ui.view">
+            <field name="name">it.asset.tree</field>
+            <field name="model">it.asset</field>
+            <field name="arch" type="xml">
+                <!-- Кольори залежать від статусу -->
+                <tree string="IT Активи" decoration-info="state=='available'" decoration-success="state=='in_use'" decoration-warning="state=='maintenance'" decoration-danger="state=='retired'">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="category_id"/>
+                    <field name="employee_id"/>
+                    <field name="state" widget="badge" decoration-info="state=='available'" decoration-success="state=='in_use'" decoration-warning="state=='maintenance'" decoration-danger="state=='retired'"/>
+                    <field name="purchase_date"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Форма активу (детальний перегляд/редагування) -->
+        <record id="view_it_asset_form" model="ir.ui.view">
+            <field name="name">it.asset.form</field>
+            <field name="model">it.asset</field>
+            <field name="arch" type="xml">
+                <form string="IT Актив">
+                    <!-- Верхня панель з кнопками lifecycle управління -->
+                    <header>
+                        <!-- Зробити доступним (після придбання) -->
+                        <button name="action_set_available" string="Зробити доступним" type="object"
+                                class="btn-primary" invisible="state != 'purchase'"/>
+                        <!-- Встановити статус "у використанні" -->
+                        <button name="action_set_in_use" string="У використанні" type="object"
+                                class="oe_highlight" invisible="state not in ['available', 'assigned']"/>
+                        <!-- Відправити на ремонт -->
+                        <button name="action_set_maintenance" string="На ремонт" type="object"
+                                invisible="state in ['maintenance', 'retired', 'purchase']"/>
+                        <!-- Повернути зі складу/ремонту -->
+                        <button name="action_set_available" string="Повернути" type="object"
+                                invisible="state not in ['in_use', 'maintenance']"/>
+                        <!-- Списати актив (з підтвердженням) -->
+                        <button name="action_retire" string="Списати" type="object"
+                                invisible="state == 'retired'" confirm="Ви впевнені, що хочете списати цей актив?"/>
+                        <!-- Статус бар з основними етапами -->
+                        <field name="state" widget="statusbar"
+                                statusbar_visible="purchase,available,assigned,in_use"/>
+                    </header>
+                    <sheet>
+                        <!-- Smart buttons (кнопки-статистика) -->
+                        <div class="oe_button_box" name="button_box">
+                            <!-- Кнопка для перегляду пов'язаних заявок -->
+                            <button name="action_view_requests" type="object" class="oe_stat_button" icon="fa-ticket">
+                                <field name="request_count" widget="statbutton" string="Заявки"/>
+                            </button>
+                        </div>
+                        <!-- Ribbon для списаних активів -->
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Списаний" bg_color="text-bg-danger" invisible="active"/>
+                        <!-- Заголовок форми -->
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Назва активу..."/>
+                            </h1>
+                        </div>
+                        <!-- Основна інформація про актив -->
+                        <group>
+                            <group>
+                                <!-- Інвентарний номер (автогенерований, readonly) -->
+                                <field name="code" readonly="1"/>
+                                <field name="category_id" options="{'no_create': True}"/>
+                                <field name="employee_id" options="{'no_create': True}"/>
+                                <!-- Дата призначення показується тільки якщо є співробітник -->
+                                <field name="assignment_date" invisible="not employee_id"/>
+                            </group>
+                            <group>
+                                <field name="serial_number"/>
+                                <field name="manufacturer"/>
+                                <field name="model"/>
+                                 <!-- QR код (поки прихований) -->
+                                <field name="qr_code" invisible="1"/>
+                            </group>
+                        </group>
+                        <!-- Вкладки з детальною інформацією -->
+                        <notebook>
+                            <!-- Загальна інформація та фінанси -->
+                            <page string="Загальна інформація">
+                                <group>
+                                    <group string="Фінансова інформація">
+                                        <field name="purchase_date"/>
+                                        <field name="purchase_price"/>
+                                        <field name="warranty_end_date"/>
+                                    </group>
+                                    <group string="Опис">
+                                        <field name="description" nolabel="1"/>
+                                    </group>
+                                </group>
+                                <separator string="Технічні характеристики"/>
+                                <field name="specifications" placeholder="Детальний опис технічних характеристик..."/>
+                            </page>
+                            <!-- Історія всіх переміщень активу -->
+                            <page string="Історія переміщень">
+                                <!-- Readonly таблиця -->
+                                <field name="movement_ids" readonly="1">
+                                    <tree create="false" delete="false">
+                                        <field name="movement_date"/>
+                                        <field name="movement_type"/>
+                                        <field name="previous_employee_id"/>
+                                        <field name="employee_id"/>
+                                        <field name="notes"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <!-- Пов'язані заявки (ремонт, заміна, etc) -->
+                            <page string="Заявки">
+                                <field name="request_ids" readonly="1">
+                                    <tree create="false">
+                                        <field name="name"/>
+                                        <field name="request_type"/>
+                                        <field name="requester_id"/>
+                                        <field name="request_date"/>
+                                        <field name="state" widget="badge"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <!-- Додаткові примітки -->
+                            <page string="Примітки">
+                                <field name="notes" placeholder="Додаткові примітки..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <!-- Chatter для відстеження змін та комунікації -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Kanban view (картки активів для мобільного) -->
+        <record id="view_it_asset_kanban" model="ir.ui.view">
+            <field name="name">it.asset.kanban</field>
+            <field name="model">it.asset</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="category_id"/>
+                    <field name="employee_id"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <!-- Картка активу -->
+                            <div class="oe_kanban_global_click">
+                                <!-- Верх: назва і статус -->
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                        <br/>
+                                        <span class="o_kanban_record_subtitle"><field name="code"/></span>
+                                    </div>
+                                    <!-- Badge зі статусом (зелений/синій) -->
+                                    <span class="badge badge-pill" t-attf-class="#{record.state.raw_value == 'in_use' ? 'badge-success' : 'badge-info'}">
+                                        <field name="state"/>
+                                    </span>
+                                </div>
+                                <!-- Низ: категорія і співробітник -->
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="category_id"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="employee_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Панель пошуку та фільтрації -->
+        <record id="view_it_asset_search" model="ir.ui.view">
+            <field name="name">it.asset.search</field>
+            <field name="model">it.asset</field>
+            <field name="arch" type="xml">
+                <search string="Пошук активів">
+                    <!-- Поля для пошуку -->
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="category_id"/>
+                    <field name="employee_id"/>
+                    <field name="serial_number"/>
+                    <separator/>
+                    <!-- Швидкі фільтри по статусах -->
+                    <filter string="Доступні" name="available" domain="[('state', '=', 'available')]"/>
+                    <filter string="У використанні" name="in_use" domain="[('state', '=', 'in_use')]"/>
+                    <filter string="На ремонті" name="maintenance" domain="[('state', '=', 'maintenance')]"/>
+                    <filter string="Без співробітника" name="no_employee" domain="[('employee_id', '=', False)]"/>
+                    <separator/>
+                    <!-- Фільтри активні/архівні -->
+                    <filter string="Активні" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Архівні" name="inactive" domain="[('active', '=', False)]"/>
+                    <!-- Групування записів -->
+                    <group expand="0" string="Групувати за">
+                        <filter string="Категорія" name="category" context="{'group_by': 'category_id'}"/>
+                        <filter string="Статус" name="state" context="{'group_by': 'state'}"/>
+                        <filter string="Співробітник" name="employee" context="{'group_by': 'employee_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Дія для відкриття активів через меню -->
+        <record id="action_it_asset" model="ir.actions.act_window">
+            <field name="name">IT Активи</field>
+            <field name="res_model">it.asset</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="search_view_id" ref="view_it_asset_search"/>
+            <!-- За замовчуванням - тільки активні -->
+            <field name="context">{'search_default_active': 1}</field>
+            <!-- Повідомлення для порожнього списку -->
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Створіть перший IT-актив
+                </p>
+                <p>
+                    Відстежуйте комп'ютери, сервери, мобільні пристрої та інше обладнання вашої компанії.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

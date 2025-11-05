@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_it_asset_category_user,it.asset.category.user,model_it_asset_category,group_it_asset_user,1,0,0,0
+access_it_asset_category_manager,it.asset.category.manager,model_it_asset_category,group_it_asset_manager,1,1,1,1
+access_it_asset_category_portal,it.asset.category.portal,model_it_asset_category,base.group_portal,1,0,0,0
+access_it_asset_user,it.asset.user,model_it_asset,group_it_asset_user,1,1,1,0
+access_it_asset_manager,it.asset.manager,model_it_asset,group_it_asset_manager,1,1,1,1
+access_it_asset_portal,it.asset.portal,model_it_asset,base.group_portal,1,0,0,0
+access_it_asset_request_user,it.asset.request.user,model_it_asset_request,group_it_asset_user,1,1,1,0
+access_it_asset_request_manager,it.asset.request.manager,model_it_asset_request,group_it_asset_manager,1,1,1,1
+access_it_asset_request_portal,it.asset.request.portal,model_it_asset_request,base.group_portal,1,1,1,0
+access_it_asset_movement_user,it.asset.movement.user,model_it_asset_movement,group_it_asset_user,1,0,0,0
+access_it_asset_movement_manager,it.asset.movement.manager,model_it_asset_movement,group_it_asset_manager,1,1,1,1
+access_it_asset_movement_portal,it.asset.movement.portal,model_it_asset_movement,base.group_portal,1,0,0,0

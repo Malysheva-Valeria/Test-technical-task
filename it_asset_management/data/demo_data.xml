@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Категорії активів -->
+        <record id="category_computers" model="it.asset.category">
+            <field name="name">Комп'ютери</field>
+            <field name="code">COMP</field>
+            <field name="description">Настільні комп'ютери та ноутбуки</field>
+        </record>
+        
+        <record id="category_laptops" model="it.asset.category">
+            <field name="name">Ноутбуки</field>
+            <field name="code">LAPTOP</field>
+            <field name="parent_id" ref="category_computers"/>
+        </record>
+        
+        <record id="category_desktops" model="it.asset.category">
+            <field name="name">Настільні ПК</field>
+            <field name="code">DESKTOP</field>
+            <field name="parent_id" ref="category_computers"/>
+        </record>
+        
+        <record id="category_servers" model="it.asset.category">
+            <field name="name">Сервери</field>
+            <field name="code">SERVER</field>
+            <field name="description">Серверне обладнання</field>
+        </record>
+        
+        <record id="category_mobile" model="it.asset.category">
+            <field name="name">Мобільні пристрої</field>
+            <field name="code">MOBILE</field>
+            <field name="description">Смартфони та планшети</field>
+        </record>
+        
+        <record id="category_peripherals" model="it.asset.category">
+            <field name="name">Периферія</field>
+            <field name="code">PERIPH</field>
+            <field name="description">Монітори, принтери, клавіатури тощо</field>
+        </record>
+        
+        <record id="category_network" model="it.asset.category">
+            <field name="name">Мережеве обладнання</field>
+            <field name="code">NETWORK</field>
+            <field name="description">Роутери, комутатори, точки доступу</field>
+        </record>
+        
+        <record id="category_software" model="it.asset.category">
+            <field name="name">Ліцензії ПЗ</field>
+            <field name="code">SOFTWARE</field>
+            <field name="description">Програмне забезпечення та ліцензії</field>
+        </record>
+        
+        <!-- Активи -->
+        <record id="asset_laptop_001" model="it.asset">
+            <field name="name">Dell Latitude 7420</field>
+            <field name="category_id" ref="category_laptops"/>
+            <field name="serial_number">DL7420-2024-001</field>
+            <field name="manufacturer">Dell</field>
+            <field name="model">Latitude 7420</field>
+            <field name="specifications">Intel Core i7-1185G7
+RAM: 16GB DDR4
+SSD: 512GB NVMe
+Display: 14" FHD (1920x1080)
+OS: Windows 11 Pro</field>
+            <field name="purchase_price">35000</field>
+            <field name="state">in_use</field>
+            <field name="description">Робочий ноутбук для керівника</field>
+        </record>
+        
+        <record id="asset_laptop_002" model="it.asset">
+            <field name="name">Lenovo ThinkPad X1 Carbon</field>
+            <field name="category_id" ref="category_laptops"/>
+            <field name="serial_number">LTP-X1C-2024-002</field>
+            <field name="manufacturer">Lenovo</field>
+            <field name="model">ThinkPad X1 Carbon Gen 10</field>
+            <field name="specifications">Intel Core i5-1240P
+RAM: 16GB LPDDR5
+SSD: 512GB
+Display: 14" WUXGA
+OS: Windows 11 Pro</field>
+            <field name="purchase_price">32000</field>
+            <field name="state">available</field>
+            <field name="description">Ноутбук для розробників</field>
+        </record>
+        
+        <record id="asset_desktop_001" model="it.asset">
+            <field name="name">HP EliteDesk 800 G9</field>
+            <field name="category_id" ref="category_desktops"/>
+            <field name="serial_number">HP-ED800-2024-001</field>
+            <field name="manufacturer">HP</field>
+            <field name="model">EliteDesk 800 G9</field>
+            <field name="specifications">Intel Core i7-12700
+RAM: 32GB DDR5
+SSD: 1TB NVMe
+GPU: Intel UHD Graphics 770
+OS: Windows 11 Pro</field>
+            <field name="purchase_price">28000</field>
+            <field name="state">in_use</field>
+        </record>
+        
+        <record id="asset_server_001" model="it.asset">
+            <field name="name">Dell PowerEdge R750</field>
+            <field name="category_id" ref="category_servers"/>
+            <field name="serial_number">DPE-R750-2024-001</field>
+            <field name="manufacturer">Dell</field>
+            <field name="model">PowerEdge R750</field>
+            <field name="specifications">2x Intel Xeon Silver 4314
+RAM: 128GB DDR4 ECC
+Storage: 4x 2TB SSD RAID 10
+Network: 2x 10GbE
+OS: Ubuntu Server 22.04 LTS</field>
+            <field name="purchase_price">120000</field>
+            <field name="state">in_use</field>
+            <field name="description">Головний сервер додатків</field>
+        </record>
+        
+        <record id="asset_mobile_001" model="it.asset">
+            <field name="name">iPhone 14 Pro</field>
+            <field name="category_id" ref="category_mobile"/>
+            <field name="serial_number">IPHONE14P-2024-001</field>
+            <field name="manufacturer">Apple</field>
+            <field name="model">iPhone 14 Pro</field>
+            <field name="specifications">A16 Bionic chip
+Storage: 256GB
+Display: 6.1" Super Retina XDR
+Camera: 48MP Main
+5G capable</field>
+            <field name="purchase_price">38000</field>
+            <field name="state">in_use</field>
+        </record>
+        
+        <record id="asset_monitor_001" model="it.asset">
+            <field name="name">Dell UltraSharp U2723DE</field>
+            <field name="category_id" ref="category_peripherals"/>
+            <field name="serial_number">DU27-2024-001</field>
+            <field name="manufacturer">Dell</field>
+            <field name="model">UltraSharp U2723DE</field>
+            <field name="specifications">27" QHD (2560x1440)
+IPS Panel
+USB-C with 90W Power Delivery
+Built-in KVM</field>
+            <field name="purchase_price">12000</field>
+            <field name="state">available</field>
+        </record>
+        
+        <record id="asset_router_001" model="it.asset">
+            <field name="name">Cisco Catalyst 9300</field>
+            <field name="category_id" ref="category_network"/>
+            <field name="serial_number">CC9300-2024-001</field>
+            <field name="manufacturer">Cisco</field>
+            <field name="model">Catalyst 9300-48P</field>
+            <field name="specifications">48 Ports 1G PoE+
+4x 10G Uplinks
+Stacking capable
+320W PoE Budget</field>
+            <field name="purchase_price">85000</field>
+            <field name="state">in_use</field>
+            <field name="description">Мережевий комутатор офісу</field>
+        </record>
+        
+        <record id="asset_broken_laptop" model="it.asset">
+            <field name="name">HP ProBook 450 G9</field>
+            <field name="category_id" ref="category_laptops"/>
+            <field name="serial_number">HP-PB450-2023-008</field>
+            <field name="manufacturer">HP</field>
+            <field name="model">ProBook 450 G9</field>
+            <field name="specifications">Intel Core i5-1235U
+RAM: 8GB
+SSD: 256GB</field>
+            <field name="purchase_price">22000</field>
+            <field name="state">maintenance</field>
+            <field name="description">На ремонті - проблема з екраном</field>
+        </record>
+        
+    </data>
+</odoo>

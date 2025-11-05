@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Pivot View для активів -->
+        <record id="view_it_asset_pivot" model="ir.ui.view">
+            <field name="name">it.asset.pivot</field>
+            <field name="model">it.asset</field>
+            <field name="arch" type="xml">
+                <pivot string="Аналітика активів" sample="1">
+                    <field name="category_id" type="row"/>
+                    <field name="state" type="col"/>
+                    <field name="purchase_price" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View для активів -->
+        <record id="view_it_asset_graph" model="ir.ui.view">
+            <field name="name">it.asset.graph</field>
+            <field name="model">it.asset</field>
+            <field name="arch" type="xml">
+                <graph string="Статистика активів" type="bar" sample="1">
+                    <field name="category_id"/>
+                    <field name="state"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Action для звітів -->
+        <record id="action_it_asset_report" model="ir.actions.act_window">
+            <field name="name">Звіти по активах</field>
+            <field name="res_model">it.asset</field>
+            <field name="view_mode">graph,pivot,tree</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Аналітика та звіти по IT-активах
+                </p>
+            </field>
+        </record>
+
+        <!-- Pivot View для заявок -->
+        <record id="view_it_asset_request_pivot" model="ir.ui.view">
+            <field name="name">it.asset.request.pivot</field>
+            <field name="model">it.asset.request</field>
+            <field name="arch" type="xml">
+                <pivot string="Аналітика заявок" sample="1">
+                    <field name="request_type" type="row"/>
+                    <field name="state" type="col"/>
+                    <field name="priority" type="col"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View для заявок -->
+        <record id="view_it_asset_request_graph" model="ir.ui.view">
+            <field name="name">it.asset.request.graph</field>
+            <field name="model">it.asset.request</field>
+            <field name="arch" type="xml">
+                <graph string="Статистика заявок" type="pie" sample="1">
+                    <field name="state"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Action для звітів заявок -->
+        <record id="action_it_asset_request_report" model="ir.actions.act_window">
+            <field name="name">Звіти по заявках</field>
+            <field name="res_model">it.asset.request</field>
+            <field name="view_mode">graph,pivot,tree</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Аналітика та звіти по заявках
+                </p>
+            </field>
+        </record>
+
+        <!-- Додавання pivot і graph в основний action активів -->
+        <record id="action_it_asset" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form,pivot,graph</field>
+        </record>
+
+        <!-- Додавання pivot і graph в action заявок -->
+        <record id="action_it_asset_request" model="ir.actions.act_window">
+            <field name="view_mode">tree,kanban,form,pivot,graph</field>
+        </record>
+
+    </data>
+</odoo>

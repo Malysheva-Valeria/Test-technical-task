@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Список заявок (таблиця з кольоровими рядками) -->
+        <record id="view_it_asset_request_tree" model="ir.ui.view">
+            <field name="name">it.asset.request.tree</field>
+            <field name="model">it.asset.request</field>
+            <field name="arch" type="xml">
+                <!-- Кольори рядків залежно від статусу -->
+                <tree string="Заявки на активи" decoration-info="state=='submitted'" decoration-primary="state=='in_progress'" decoration-success="state=='done'" decoration-danger="state=='rejected'">
+                    <field name="name"/>
+                    <field name="request_type"/>
+                    <field name="requester_id"/>
+                    <field name="category_id" optional="show"/>
+                    <field name="asset_id" optional="hide"/>
+                    <field name="request_date"/>
+                    <field name="priority" widget="priority"/>
+                    <field name="assigned_to_id" optional="show"/>
+                    <field name="state" widget="badge" decoration-info="state=='submitted'" decoration-success="state=='done'" decoration-warning="state=='in_progress'"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Форма заявки (детальний перегляд/редагування) -->
+        <record id="view_it_asset_request_form" model="ir.ui.view">
+            <field name="name">it.asset.request.form</field>
+            <field name="model">it.asset.request</field>
+            <field name="arch" type="xml">
+                <form string="Заявка на актив">
+                    <!-- Верхня панель з кнопками workflow -->
+                    <header>
+                        <!-- Подати заявку (тільки для чернеток) -->
+                        <button name="action_submit" string="Подати" type="object" 
+                                class="oe_highlight" invisible="state != 'draft'"/>
+                        <!-- Взяти в роботу (тільки для менеджерів) -->
+                        <button name="action_start_progress" string="Взяти в роботу" type="object" 
+                                class="oe_highlight" invisible="state != 'submitted'" 
+                                groups="it_asset_management.group_it_asset_manager"/>
+                        <!-- Схвалити заявку -->
+                        <button name="action_approve" string="Схвалити" type="object" 
+                                invisible="state != 'in_progress'" 
+                                groups="it_asset_management.group_it_asset_manager"/>
+                        <!-- Завершити виконання -->
+                        <button name="action_complete" string="Завершити" type="object" 
+                                class="oe_highlight" invisible="state not in ['in_progress', 'approved']" 
+                                groups="it_asset_management.group_it_asset_manager"/>
+                        <!-- Відхилити заявку -->
+                        <button name="action_reject" string="Відхилити" type="object" 
+                                invisible="state in ['done', 'rejected', 'cancelled']" 
+                                groups="it_asset_management.group_it_asset_manager"/>
+                        <!-- Скасувати заявку (доступно для всіх) -->
+                        <button name="action_cancel" string="Скасувати" type="object" 
+                                invisible="state in ['done', 'rejected', 'cancelled']"/>
+                        <!-- Статус бар з основними етапами -->
+                        <field name="state" widget="statusbar" 
+                               statusbar_visible="draft,submitted,in_progress,done"/>
+                    </header>
+                    <sheet>
+                        <!-- Заголовок з номером заявки -->
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <!-- Основна інформація про заявку -->
+                        <group>
+                            <group>
+                                <field name="request_type" readonly="state != 'draft'"/>
+                                <field name="requester_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                                <!-- Категорія показується тільки для нових активів -->
+                                <field name="category_id" invisible="request_type != 'new'" readonly="state != 'draft'" options="{'no_create': True}"/>
+                                <!-- Актив показується для ремонту/заміни -->
+                                <field name="asset_id" invisible="request_type == 'new'" readonly="state != 'draft'" options="{'no_create': True}"/>
+                            </group>
+                            <group>
+                                <field name="priority" widget="priority"/>
+                                <field name="assigned_to_id" options="{'no_create': True}"/>
+                                <field name="request_date" readonly="1"/>
+                                <field name="expected_date"/>
+                                <!-- Дата виконання показується тільки після завершення -->
+                                <field name="completion_date" readonly="1" invisible="state != 'done'"/>
+                            </group>
+                        </group>
+                        <!-- Вкладки з детальною інформацією -->
+                        <notebook>
+                            <!-- Опис проблеми/потреби -->
+                            <page string="Опис">
+                                <group>
+                                    <field name="description" placeholder="Детальний опис потреби або проблеми..." nolabel="1"/>
+                                </group>
+                                <separator string="Обґрунтування"/>
+                                <field name="justification" placeholder="Обґрунтування необхідності..." nolabel="1"/>
+                            </page>
+                            <!-- Додаткові коментарі -->
+                            <page string="Коментарі">
+                                <field name="comments" placeholder="Додаткові коментарі..." nolabel="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <!-- Chatter для відстеження змін та комунікації -->
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Kanban view (картки, групування по статусах) -->
+        <record id="view_it_asset_request_kanban" model="ir.ui.view">
+            <field name="name">it.asset.request.kanban</field>
+            <field name="model">it.asset.request</field>
+            <field name="arch" type="xml">
+                <!-- За замовчуванням групується по статусу -->
+                <kanban default_group_by="state" class="o_kanban_small_column">
+                    <field name="name"/>
+                    <field name="request_type"/>
+                    <field name="requester_id"/>
+                    <field name="priority"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <!-- Картка заявки -->
+                            <div class="oe_kanban_global_click">
+                                <!-- Верх картки -->
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                    </div>
+                                    <span class="float-end">
+                                        <field name="priority" widget="priority"/>
+                                    </span>
+                                </div>
+                                <!-- Тіло картки -->
+                                <div class="o_kanban_record_body">
+                                    <field name="description" widget="text"/>
+                                </div>
+                                <!-- Низ картки -->
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="requester_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="request_date"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+        <!-- Панель пошуку та фільтрації -->
+        <record id="view_it_asset_request_search" model="ir.ui.view">
+            <field name="name">it.asset.request.search</field>
+            <field name="model">it.asset.request</field>
+            <field name="arch" type="xml">
+                <search string="Пошук заявок">
+                    <!-- Поля для пошуку -->
+                    <field name="name"/>
+                    <field name="requester_id"/>
+                    <field name="assigned_to_id"/>
+                    <field name="asset_id"/>
+                    <separator/>
+                    <!-- Персональні фільтри -->
+                    <filter string="Мої заявки" name="my_requests" domain="[('requester_id', '=', uid)]"/>
+                    <filter string="Призначені мені" name="assigned_to_me" domain="[('assigned_to_id', '=', uid)]"/>
+                    <separator/>
+                    <!-- Фільтри по статусах -->
+                    <filter string="Чернетки" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Очікування" name="submitted" domain="[('state', '=', 'submitted')]"/>
+                    <filter string="В роботі" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                    <filter string="Готово" name="done" domain="[('state', '=', 'done')]"/>
+                    <separator/>
+                    <!-- Фільтри по типах заявок -->
+                    <filter string="Новий актив" name="new" domain="[('request_type', '=', 'new')]"/>
+                    <filter string="Ремонт" name="repair" domain="[('request_type', '=', 'repair')]"/>
+                    <filter string="Заміна" name="replacement" domain="[('request_type', '=', 'replacement')]"/>
+                    <separator/>
+                    <!-- Фільтр по пріоритету -->
+                    <filter string="Високий пріоритет" name="high_priority" domain="[('priority', 'in', ['2', '3'])]"/>
+                    <!-- Групування записів -->
+                    <group expand="0" string="Групувати за">
+                        <filter string="Статус" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Тип заявки" name="group_type" context="{'group_by': 'request_type'}"/>
+                        <filter string="Заявник" name="group_requester" context="{'group_by': 'requester_id'}"/>
+                        <filter string="Відповідальний" name="group_assigned" context="{'group_by': 'assigned_to_id'}"/>
+                        <filter string="Дата заявки" name="group_date" context="{'group_by': 'request_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Дія: всі заявки -->
+        <record id="action_it_asset_request" model="ir.actions.act_window">
+            <field name="name">Заявки на активи</field>
+            <field name="res_model">it.asset.request</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="search_view_id" ref="view_it_asset_request_search"/>
+            <!-- Повідомлення для порожнього списку -->
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Створіть першу заявку
+                </p>
+                <p>
+                    Співробітники можуть подавати заявки на отримання нового обладнання або ремонт існуючого.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Дія: тільки нові заявки (фільтр submitted) -->
+        <record id="action_it_asset_request_new" model="ir.actions.act_window">
+            <field name="name">Нові заявки</field>
+            <field name="res_model">it.asset.request</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="search_view_id" ref="view_it_asset_request_search"/>
+            <!-- За замовчуванням активний фільтр "Очікування" -->
+            <field name="context">{'search_default_submitted': 1}</field>
+            <field name="domain">[('state', '=', 'submitted')]</field>
+        </record>
+        
+    </data>
+</odoo>

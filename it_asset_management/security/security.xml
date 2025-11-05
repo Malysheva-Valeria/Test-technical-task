@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        
+        <!-- Категорія модуля -->
+        <record id="module_category_it_asset" model="ir.module.category">
+            <field name="name">IT Asset Management</field>
+            <field name="description">Управління IT-активами</field>
+            <field name="sequence">30</field>
+        </record>
+        
+        <!-- Група: Користувач -->
+        <record id="group_it_asset_user" model="res.groups">
+            <field name="name">Користувач</field>
+            <field name="category_id" ref="module_category_it_asset"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        
+        <!-- Група: Менеджер -->
+        <record id="group_it_asset_manager" model="res.groups">
+            <field name="name">Менеджер</field>
+            <field name="category_id" ref="module_category_it_asset"/>
+            <field name="implied_ids" eval="[(4, ref('group_it_asset_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+        
+        <!-- Правила доступу для заявок -->
+        <record id="it_asset_request_rule_user" model="ir.rule">
+            <field name="name">IT Asset Request: User can see own requests</field>
+            <field name="model_id" ref="model_it_asset_request"/>
+            <field name="domain_force">[('requester_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal')), (4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        
+        <record id="it_asset_request_rule_manager" model="ir.rule">
+            <field name="name">IT Asset Request: Manager can see all requests</field>
+            <field name="model_id" ref="model_it_asset_request"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_it_asset_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        
+        <!-- Правила доступу для активів -->
+        <record id="it_asset_rule_user" model="ir.rule">
+            <field name="name">IT Asset: User can see assigned assets</field>
+            <field name="model_id" ref="model_it_asset"/>
+            <field name="domain_force">[('employee_id', '=', user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base.group_portal')), (4, ref('base.group_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+        
+        <record id="it_asset_rule_manager" model="ir.rule">
+            <field name="name">IT Asset: Manager can see all assets</field>
+            <field name="model_id" ref="model_it_asset"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_it_asset_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+        
+        <!-- Послідовності для автоматичної нумерації -->
+        <record id="seq_it_asset" model="ir.sequence">
+            <field name="name">IT Asset Sequence</field>
+            <field name="code">it.asset</field>
+            <field name="prefix">AST</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        
+        <record id="seq_it_asset_request" model="ir.sequence">
+            <field name="name">IT Asset Request Sequence</field>
+            <field name="code">it.asset.request</field>
+            <field name="prefix">REQ</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        
+    </data>
+</odoo>

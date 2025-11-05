@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="128" height="128" rx="20" fill="url(#grad1)"/>
+  
+  <!-- Computer Monitor -->
+  <rect x="24" y="28" width="52" height="38" rx="2" fill="#ecf0f1" stroke="#34495e" stroke-width="2"/>
+  <rect x="28" y="32" width="44" height="30" fill="#2c3e50"/>
+  <rect x="42" y="66" width="16" height="4" fill="#34495e"/>
+  <rect x="38" y="70" width="24" height="2" fill="#34495e"/>
+  
+  <!-- Mobile Device -->
+  <rect x="52" y="50" width="24" height="38" rx="3" fill="#ecf0f1" stroke="#34495e" stroke-width="2"/>
+  <rect x="56" y="54" width="16" height="26" fill="#2c3e50"/>
+  <circle cx="64" cy="84" r="2" fill="#34495e"/>
+  
+  <!-- Server/Hard drive -->
+  <rect x="82" y="38" width="30" height="42" rx="2" fill="#ecf0f1" stroke="#34495e" stroke-width="2"/>
+  <line x1="86" y1="48" x2="108" y2="48" stroke="#27ae60" stroke-width="2"/>
+  <line x1="86" y1="54" x2="108" y2="54" stroke="#27ae60" stroke-width="2"/>
+  <line x1="86" y1="60" x2="108" y2="60" stroke="#e74c3c" stroke-width="2"/>
+  <line x1="86" y1="66" x2="108" y2="66" stroke="#27ae60" stroke-width="2"/>
+  <circle cx="88" cy="72" r="2" fill="#27ae60"/>
+  <circle cx="94" cy="72" r="2" fill="#27ae60"/>
+  
+  <!-- Tool/Wrench icon -->
+  <g transform="translate(32, 84)">
+    <path d="M 8 2 L 12 6 L 6 12 L 2 8 Z" fill="#e67e22" stroke="#d35400" stroke-width="1"/>
+    <rect x="10" y="10" width="10" height="4" rx="2" transform="rotate(45 15 12)" fill="#e67e22" stroke="#d35400" stroke-width="1"/>
+    <circle cx="4" cy="4" r="3" fill="#f39c12" stroke="#e67e22" stroke-width="1"/>
+  </g>
+  
+  <!-- Checkmark -->
+  <g transform="translate(75, 90)">
+    <circle cx="10" cy="10" r="12" fill="#27ae60" opacity="0.9"/>
+    <path d="M 4 10 L 8 14 L 16 6" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

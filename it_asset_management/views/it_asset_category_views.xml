@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Список категорій(таблиця) -->
+        <record id="view_it_asset_category_tree" model="ir.ui.view">
+            <field name="name">it.asset.category.tree</field>
+            <field name="model">it.asset.category</field>
+            <field name="arch" type="xml">
+                <tree string="Категорії активів">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="parent_id"/>
+                    <field name="asset_count"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Форма категорії(детальний перегляд/редагування) -->
+        <record id="view_it_asset_category_form" model="ir.ui.view">
+            <field name="name">it.asset.category.form</field>
+            <field name="model">it.asset.category</field>
+            <field name="arch" type="xml">
+                <form string="Категорія активу">
+                    <sheet>
+                        <!-- Заголовок -->
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Назва категорії..."/>
+                            </h1>
+                        </div>
+
+                        <!-- Основні поля категорії -->
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="parent_id"/>
+                            </group>
+                            <group>
+                                <field name="active"/>
+                                <field name="asset_count"/>
+                            </group>
+                        </group>
+
+                        <!-- Вкладки з додатковою інформацією -->
+                        <notebook>
+                            <!-- Опис категорії -->
+                            <page string="Опис">
+                                <field name="description" placeholder="Опис категорії..."/>
+                            </page>
+                            <!-- Підкатегорії -->
+                            <page string="Дочірні категорії" invisible="not child_ids">
+                                <field name="child_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="code"/>
+                                        <field name="asset_count"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Панель пошуку та фільтрації -->
+        <record id="view_it_asset_category_search" model="ir.ui.view">
+            <field name="name">it.asset.category.search</field>
+            <field name="model">it.asset.category</field>
+            <field name="arch" type="xml">
+                <search string="Пошук категорій">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <filter string="Активні" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Архівні" name="inactive" domain="[('active', '=', False)]"/>
+                    <group expand="0" string="Групувати за">
+                        <filter string="Батьківська категорія" name="parent" context="{'group_by': 'parent_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Відкриття категорій через меню -->
+        <record id="action_it_asset_category" model="ir.actions.act_window">
+            <field name="name">Категорії активів</field>
+            <field name="res_model">it.asset.category</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_it_asset_category_search"/>
+            <field name="context">{'search_default_active': 1}</field>
+            <!-- Повідомлення для порожнього списку -->
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Створіть першу категорію активів
+                </p>
+                <p>
+                    Категорії допомагають організувати активи за типами:<br/>
+                    комп'ютери, сервери, мобільні пристрої, ліцензії тощо.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>
