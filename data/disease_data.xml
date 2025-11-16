@@ -1,0 +1,29 @@
+<odoo>
+    <data noupdate="1">
+
+        <!-- Disease Type 1: Influenza -->
+        <record id="disease_influenza" model="hr_hospital.disease">
+            <field name="name">Influenza</field>
+            <field name="code">J11</field>
+            <field name="category">infectious</field>
+            <field name="description">Acute respiratory infection caused by influenza viruses</field>
+        </record>
+
+        <!-- Disease Type 2: Hypertension -->
+        <record id="disease_hypertension" model="hr_hospital.disease">
+            <field name="name">Hypertension</field>
+            <field name="code">I10</field>
+            <field name="category">chronic</field>
+            <field name="description">Chronic condition characterized by elevated blood pressure</field>
+        </record>
+
+        <!-- Disease Type 3: Diabetes Mellitus -->
+        <record id="disease_diabetes" model="hr_hospital.disease">
+            <field name="name">Diabetes Mellitus Type 2</field>
+            <field name="code">E11</field>
+            <field name="category">chronic</field>
+            <field name="description">Metabolic disorder characterized by high blood sugar levels</field>
+        </record>
+
+    </data>
+</odoo>

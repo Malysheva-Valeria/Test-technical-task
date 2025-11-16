@@ -1,0 +1,38 @@
+<odoo>
+    <data noupdate="1">
+
+        <!-- Patient 1 -->
+        <record id="patient_shevchenko" model="hr_hospital.patient">
+            <field name="name">Taras Shevchenko</field>
+            <field name="birth_date">1985-03-15</field>
+            <field name="gender">male</field>
+            <field name="phone">+380671234567</field>
+            <field name="email">taras.shevchenko@email.com</field>
+            <field name="address">Kyiv, Khreshchatyk St. 1</field>
+            <field name="doctor_id" ref="doctor_ivanov"/>
+        </record>
+
+        <!-- Patient 2 -->
+        <record id="patient_bondarenko" model="hr_hospital.patient">
+            <field name="name">Olena Bondarenko</field>
+            <field name="birth_date">1990-07-22</field>
+            <field name="gender">female</field>
+            <field name="phone">+380671234568</field>
+            <field name="email">olena.bondarenko@email.com</field>
+            <field name="address">Lviv, Shevchenka Ave. 10</field>
+            <field name="doctor_id" ref="doctor_petrova"/>
+        </record>
+
+        <!-- Patient 3 -->
+        <record id="patient_sydorenko" model="hr_hospital.patient">
+            <field name="name">Petro Sydorenko</field>
+            <field name="birth_date">1978-11-30</field>
+            <field name="gender">male</field>
+            <field name="phone">+380671234569</field>
+            <field name="email">petro.sydorenko@email.com</field>
+            <field name="address">Odesa, Derybasivska St. 5</field>
+            <field name="doctor_id" ref="doctor_petrova"/>
+        </record>
+
+    </data>
+</odoo>

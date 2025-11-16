@@ -1,0 +1,33 @@
+<odoo>
+    <data noupdate="1">
+
+        <!-- Doctor 1: Senior Doctor -->
+        <record id="doctor_ivanov" model="hr_hospital.doctor">
+            <field name="name">Dr. Ivan Ivanov</field>
+            <field name="specialty">Cardiologist</field>
+            <field name="phone">+380501234567</field>
+            <field name="email">ivan.ivanov@hospital.com</field>
+            <field name="is_intern">False</field>
+        </record>
+
+        <!-- Doctor 2: Senior Doctor -->
+        <record id="doctor_petrova" model="hr_hospital.doctor">
+            <field name="name">Dr. Maria Petrova</field>
+            <field name="specialty">General Practitioner</field>
+            <field name="phone">+380501234568</field>
+            <field name="email">maria.petrova@hospital.com</field>
+            <field name="is_intern">False</field>
+        </record>
+
+        <!-- Doctor 3: Intern with Mentor -->
+        <record id="doctor_kovalenko" model="hr_hospital.doctor">
+            <field name="name">Dr. Oleksandr Kovalenko</field>
+            <field name="specialty">Internal Medicine</field>
+            <field name="phone">+380501234569</field>
+            <field name="email">oleksandr.kovalenko@hospital.com</field>
+            <field name="is_intern">True</field>
+            <field name="mentor_id" ref="doctor_petrova"/>
+        </record>
+
+    </data>
+</odoo>

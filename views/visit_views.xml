@@ -1,0 +1,74 @@
+<odoo>
+    <data>
+
+        <!-- Visit Tree View -->
+        <record id="view_hospital_visit_tree" model="ir.ui.view">
+            <field name="name">hr_hospital.visit.tree</field>
+            <field name="model">hr_hospital.visit</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="doctor_id"/>
+                    <field name="visit_date"/>
+                    <field name="status"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Visit Form View -->
+        <record id="view_hospital_visit_form" model="ir.ui.view">
+            <field name="name">hr_hospital.visit.form</field>
+            <field name="model">hr_hospital.visit</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="status" widget="statusbar" options="{'clickable': '1'}"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="patient_id"/>
+                                <field name="doctor_id"/>
+                            </group>
+                            <group>
+                                <field name="visit_date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Diagnosis">
+                                <group>
+                                    <field name="diagnosis" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page string="Prescription">
+                                <group>
+                                    <field name="prescription" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page string="Notes">
+                                <group>
+                                    <field name="notes" nolabel="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Visit Action -->
+        <record id="action_hospital_visit" model="ir.actions.act_window">
+            <field name="name">Visits</field>
+            <field name="res_model">hr_hospital.visit</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new visit
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,81 @@
+<odoo>
+    <data>
+
+        <!-- Patient Tree View -->
+        <record id="view_hospital_patient_tree" model="ir.ui.view">
+            <field name="name">hr_hospital.patient.tree</field>
+            <field name="model">hr_hospital.patient</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="age"/>
+                    <field name="gender"/>
+                    <field name="phone"/>
+                    <field name="doctor_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Patient Form View -->
+        <record id="view_hospital_patient_form" model="ir.ui.view">
+            <field name="name">hr_hospital.patient.form</field>
+            <field name="model">hr_hospital.patient</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="birth_date"/>
+                                <field name="age"/>
+                                <field name="gender"/>
+                            </group>
+                            <group>
+                                <field name="phone"/>
+                                <field name="email"/>
+                                <field name="doctor_id"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="address"/>
+                        </group>
+                        <notebook>
+                            <page string="Diseases">
+                                <field name="disease_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="code"/>
+                                        <field name="category"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Visits">
+                                <field name="visit_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="doctor_id"/>
+                                        <field name="visit_date"/>
+                                        <field name="status"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Patient Action -->
+        <record id="action_hospital_patient" model="ir.actions.act_window">
+            <field name="name">Patients</field>
+            <field name="res_model">hr_hospital.patient</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new patient
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

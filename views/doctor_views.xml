@@ -1,0 +1,89 @@
+<odoo>
+    <data>
+
+        <!-- Doctor Tree View -->
+        <record id="view_hospital_doctor_tree" model="ir.ui.view">
+            <field name="name">hr_hospital.doctor.tree</field>
+            <field name="model">hr_hospital.doctor</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="specialty"/>
+                    <field name="phone"/>
+                    <field name="email"/>
+                    <field name="is_intern"/>
+                    <field name="mentor_id"/>
+                    <field name="patient_count"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Doctor Form View -->
+        <record id="view_hospital_doctor_form" model="ir.ui.view">
+            <field name="name">hr_hospital.doctor.form</field>
+            <field name="model">hr_hospital.doctor</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="specialty"/>
+                                <field name="phone"/>
+                                <field name="email"/>
+                            </group>
+                            <group>
+                                <field name="is_intern"/>
+                                <field name="mentor_id" invisible="not is_intern"/>
+                                <field name="patient_count"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Patients">
+                                <field name="patient_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="age"/>
+                                        <field name="phone"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Interns" invisible="is_intern">
+                                <field name="intern_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="specialty"/>
+                                        <field name="phone"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Visits">
+                                <field name="visit_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="patient_id"/>
+                                        <field name="visit_date"/>
+                                        <field name="status"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Doctor Action -->
+        <record id="action_hospital_doctor" model="ir.actions.act_window">
+            <field name="name">Doctors</field>
+            <field name="res_model">hr_hospital.doctor</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new doctor
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>
